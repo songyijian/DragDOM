@@ -6,17 +6,15 @@ const configList = require('./rollup.config');
 import livereload from 'rollup-plugin-livereload';
 import replace from 'rollup-plugin-replace';
 
-// const itemName = require('./projectName')//'/test'
-const resolveFile = function(...dir){return path.join(__dirname,`../`, ...dir)};
+const resolve = function(...dir){return path.join(__dirname,`../`, ...dir)};
 
-const PORT = 7001;
-const devSite = `http://127.0.0.1:${PORT}`;
+let host = '10.131.134.84'
+let port = 7001
+let openPage = `http://${host}:${7001}/demo/index.html`
 
 setTimeout(()=>{
-  const devPath = path.join('index.html');
-  const devUrl = `${devSite}/${devPath}`;
-  console.log(`[dev]: ${devUrl}`)
-}, 1000);
+  console.log(`> ${openPage}`)
+}, 800);
 
 
 configList.map((config, index) => {
@@ -30,15 +28,15 @@ configList.map((config, index) => {
         ENV: JSON.stringify('development'),
       }),
       livereload({
-        watch: resolveFile('') // default
+        watch: resolve('') // default
       }),
       ...[
+        // https://www.npmjs.com/package/rollup-plugin-serve
         serve({
-          host:'10.131.134.84',
-          port: PORT,
-          open: true, // 自动打开页面
-          openPage: './src/', // 打开的页面
-          contentBase: [resolveFile('')]
+          host,
+          port,
+          open: true,
+          openPage
         })
       ]
     ]

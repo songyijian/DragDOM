@@ -1,7 +1,7 @@
 {
   "name": "dragdom",
   "version": "1.0.0",
-  "description": "兼容手机触控屏的DOM元素拖拽",
+  "description": "兼容手机触控屏的DOM拖拽",
   "main": "index.js",
   "keywords": [
     "drag",
