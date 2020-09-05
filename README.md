@@ -7,7 +7,7 @@
 被拖拽的dom必须有position属性。 类型支持fixed｜absolute 
 
 ```
-const m = new Drag(el,{overflow:false}) //el=拖动原属，config={overflow:'限制在定位父级内'}
+const m = new Drag(el,{config}) //el=拖动原属，config={overflow:'限制在定位父级内'}
 
 
 
@@ -45,8 +45,11 @@ const m = new Drag(el,{overflow:false}) //el=拖动原属，config={overflow:'�
     elLeft:0
   }
 
-  // drag 阶段才会被准确拿到，之前都为null，在end是可以根据它来判断是否有移动
-  this.moveData = {mx,my,ely,elx} //mx,my 移动距离，ely,elx 元素当前的位置
+  
+  this.moveData = { // drag 阶段才会被准确拿到，之前都为null，在end是可以根据它来判断是否有移动
+    mx,my,    // mx,my 移动距离
+    ely,elx   // ely,elx 元素当前的位置
+  }
 
   this.config = {
     overflow: data.overflow || false
