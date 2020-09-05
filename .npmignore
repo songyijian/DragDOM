@@ -1,0 +1,11 @@
+.DS_Store
+.babelrc
+.gitignore
+*.log
+*.md
+
+
+node_modules/
+build/
+dist/
+demo/

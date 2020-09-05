@@ -2,18 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+
   <title>Documen</title>
   <script src="../dist/dragdom.umd.1.0.0.js"></script>
 
   <style>
-    html,body,#app{padding: 0; margin:0; height: 100%; width: 100%;}
-    #box{ width: 100px; height: 100px; background: red;}
+    html,body{padding: 0; margin:0; }
+    body{text-align: center; padding: 0; margin:0;}
+    *{ box-sizing: border-box;}
+    .boxf{ border:1px solid #000; height:100vw; width:80vw; position: relative; margin:1vw; display: inline-block;}
+    .boxc{ width: 20vw; height: 20vw; background: red; position: absolute;}
+    #box3{ position:fixed; top:20px;}
+    #box4{ position:fixed; top:120px;}
+    .fixed{ background: yellow;}
+
   </style>
 </head>
 <body>
-  <div id="app">
-    <div id="box"></div>
+
+  <div class="boxf">
+    <h3> 限制拖出父级盒子 </h3>
+    <div id="box1" class="boxc">absolute</div>
   </div>
+
+  <div class="boxf">
+    <h3> 可拖出父级盒子 </h3>
+    <div id="box2" class="boxc">absolute</div>
+  </div>
+
+  <div id="box3" class="boxc fixed">fixed 不可拖出</div>
+  <div id="box4" class="boxc fixed">fixed 可拖出</div>
+
+
+  <script>
+    const $ = document.querySelector.bind(document)
+    new DragDOM($('#box1'),{overflow:false})
+    new DragDOM($('#box2'),{overflow:true})
+
+    new DragDOM($('#box3'))
+    new DragDOM($('#box4'),{overflow:true})
+
+  </script>
 </body>
 </html>

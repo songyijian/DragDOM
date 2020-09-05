@@ -7,15 +7,13 @@ import livereload from 'rollup-plugin-livereload';
 import replace from 'rollup-plugin-replace';
 
 const resolve = function(...dir){return path.join(__dirname,`../`, ...dir)};
+const host = '192.168.0.101' //'localhost' //'10.131.134.84'
+const port = 7001
+const openPage = `http://${host}:${7001}/demo/index.html`
 
-let host = '10.131.134.84'
-let port = 7001
-let openPage = `http://${host}:${7001}/demo/index.html`
-
-setTimeout(()=>{
+setTimeout(() => {
   console.log(`> ${openPage}`)
 }, 800);
-
 
 configList.map((config, index) => {
   config.output.sourcemap = true;
@@ -44,6 +42,8 @@ configList.map((config, index) => {
 
   return config;
 })
+
+
 
 
 module.exports = configList;

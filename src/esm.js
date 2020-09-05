@@ -1,12 +1,11 @@
 'use strict';
 
-
 function getStyle(obj,attr){ 
   return obj.currentStyle ? obj.currentStyle[attr] : (window.getComputedStyle(obj,false)[attr]);
 }
 
-// 获取元素在页面上的绝对位置
 function getPage(element){
+  // 获取元素在页面上的绝对位置
   var actualLeft=element.offsetLeft;
   var actualTop=element.offsetTop;
   var parent=element.offsetParent;
@@ -22,7 +21,6 @@ function getPage(element){
 }
 
 
-////////////////////////////////
 
 class Drag{
   constructor(el, data={}){
@@ -77,23 +75,21 @@ class Drag{
     var startx,starty;
 
 
-
     el.addEventListener(evStart, function(ev){
       // ev.preventDefault();
       this.elPosition =  getStyle(el,'position')
       if( !(this.elPosition === 'absolute' || this.elPosition === 'fixed')){
-        console.warn('[Drag el] position on  absolute | fixed！')
+        console.error('[Drag el] position on  absolute | fixed！')
         return 
       }
       var _ev = resetEv(ev)
 
       if(_this.elPosition === 'absolute'){
         parent = el.offsetParent
-
-        let fa = getPage(parent)
+        const fa = getPage(parent)
+        const {height,width} =  parent.getBoundingClientRect()
         parentTop = fa.y;
         parentLeft = fa.x;
-        let {height,width} =  parent.getBoundingClientRect()
         parentWidth = width
         parentHeight = height
 
@@ -197,8 +193,6 @@ class Drag{
 
 }
 
-////////////////////////////////
 
-// console.log(1)
 
-// export default Drag
+export default Drag

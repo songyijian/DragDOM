@@ -1,8 +1,4 @@
 .DS_Store
-node_modules/
 *.log
 
-examples/dist/
-lib/
 node_modules/
-.npmignore
