@@ -7,7 +7,7 @@
 被拖拽的dom必须有position属性。 类型支持fixed｜absolute 
 
 ```
-const m = new Drag(el,{config}) //el=拖动原属，config={overflow:'限制在定位父级内'}
+const m = new DragDOM(el,{config}) //el=拖动原属，config={overflow:'限制在定位父级内'}
 
 
 
