@@ -32,12 +32,22 @@ module.exports = [
     ], 
     plugins
   },
+  // {
+  //   input: resolveFile('./src/index.js'),
+  //   output: [
+  //     {
+  //       file: resolveFile(`dist/${pname}.iife.${pversion}.js`),
+  //       format: 'iife',
+  //     }
+  //   ], 
+  //   plugins
+  // },
   {
-    input: resolveFile('./src/umd.js'),
+    input: resolveFile('./src/iife.js'),
     output: [
       {
-        file: resolveFile(`dist/${pname}.umd.${pversion}.js`),
-        format: 'umd',
+        file: resolveFile(`dist/${pname}.umd.js`),
+        format: 'iife',
       }
     ], 
     plugins

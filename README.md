@@ -1,14 +1,32 @@
-# DragDOM
-兼容手机触控屏的DOM元素拖拽插件  
+# dragdomjs
+兼容手机触控屏的DOM元素拖拽插件;
+
+//被拖拽的dom必须有position属性。 类型支持fixed｜absolute 
+
+
+
+## 安装
+```
+// npm 
+npm install dragdomjs
+
+// yarn
+yarn add dragdomjs
+
+// Browserify https://github.com/songyijian/DragDOM
+
+<script src="../dist/dragdom.umd.1.0.0.js"></script>
+
+
+
+```
 
 
 ## 快速上手
 
-被拖拽的dom必须有position属性。 类型支持fixed｜absolute 
 
 ```
 const m = new DragDOM(el,{config}) //el=拖动原属，config={overflow:'限制在定位父级内'}
-
 
 
 

@@ -1,18 +1,12 @@
 {
-  "name": "dragdom",
-  "version": "1.0.0",
+  "name": "dragdomjs",
+  "version": "1.0.1",
   "description": "兼容手机触控屏的DOM拖拽",
-  "main": "index.js",
+  "main": "./src/index.js",
   "keywords": [
     "drag",
-    "drop",
-    "dnd",
-    "drag and drop",
     "dragdom",
     "html5",
-    "drag & drop",
-    "frontend",
-    "browserify",
     "mobile"
   ],
   "author": {
