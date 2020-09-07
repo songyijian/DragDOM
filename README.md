@@ -14,16 +14,13 @@ npm install dragdomjs
 yarn add dragdomjs
 
 // Browserify https://github.com/songyijian/DragDOM
-
-<script src="../dist/dragdom.umd.1.0.0.js"></script>
-
-
+<script src="../dist/dragdomjs.iife.js"></script> 
 
 ```
 
 
-## 快速上手
 
+## 快速上手
 
 ```
 const m = new DragDOM(el,{config}) //el=拖动原属，config={overflow:'限制在定位父级内'}

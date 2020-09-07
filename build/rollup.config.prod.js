@@ -1,11 +1,13 @@
 // process.env.NODE_ENV = 'production';
 const { uglify } = require('rollup-plugin-uglify');
 const configList = require('./rollup.config');
-import replace from 'rollup-plugin-replace';
+const replace = require('rollup-plugin-replace');
+const clear = require('rollup-plugin-clear');
 
 
 configList.map((config, index) => {
   config.output.sourcemap = false;
+
   config.plugins = [
     replace({
       exclude: 'node_modules/**',
@@ -13,9 +15,14 @@ configList.map((config, index) => {
     }),
     ...config.plugins,
     ...[
+      index === 0 && clear({
+        targets: ['dist'],
+        watch: true, // default: false
+      }),
       uglify()
     ]
   ]
+
   return config;
 })
 
