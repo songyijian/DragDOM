@@ -24,7 +24,7 @@
   "scripts": {
     "dev": "rollup -w -c ./build/rollup.config.dev.js",
     "build": "rollup -c ./build/rollup.config.prod.js",
-    "pushnpm":"npm run build && npm publish"
+    "pushnpm":"npm run build && git add . && git commit -m 'npm publish' && git push && npm publish"
   },
   "repository": {
     "type": "git",
