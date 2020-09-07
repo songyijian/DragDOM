@@ -26,11 +26,11 @@ yarn add dragdomjs
 // es2015+
 import DragDOM from 'dragdomjs'
 
-
 //el=拖动原属，config={overflow:'限制在定位父级内'}
-  const m = new DragDOM(el,{config}) 
+  new DragDOM(el,{config}) 
 
-  
+
+
 // 点赞拖拽
   new DragDOM(dom.like)
     .start(function(ev){
@@ -56,6 +56,8 @@ import DragDOM from 'dragdomjs'
 function
 ```
 // 方法：函数this指向实例（如果使用this请不要用箭头函数）
+
+const m = new DragDOM(el,{config}) 
 
   m.start(function(){})
 
