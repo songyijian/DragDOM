@@ -6,8 +6,12 @@
   "keywords": [
     "drag",
     "dragdom",
+    "dragdomjs",
+    "DragDOM",
+    "Drag",
     "html5",
-    "mobile"
+    "mobile",
+    "touchdrag"
   ],
   "author": {
     "name": "yijian.song",
