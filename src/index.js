@@ -50,7 +50,7 @@ class DragDOM{
 
 
   init(el){
-    var _this = this
+    const that = this
     var lack = false
     var ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
 
@@ -84,7 +84,7 @@ class DragDOM{
       }
       var _ev = resetEv(ev)
 
-      if(_this.elPosition === 'absolute'){
+      if(that.elPosition === 'absolute'){
         parent = el.offsetParent
         const fa = getPage(parent)
         const {height,width} =  parent.getBoundingClientRect()
@@ -112,7 +112,7 @@ class DragDOM{
       startx = _ev.pageX
       starty = _ev.pageY
 
-      _this.parentData = {
+      that.parentData = {
         parent,
         parentWidth,
         parentHeight,
@@ -120,16 +120,16 @@ class DragDOM{
         parentLeft,
       }
 
-      _this.elData = {
+      that.elData = {
         elWidth,
         elHeight,
         elTop,
         elLeft
       }
-      _this.moveData = null
+      that.moveData = null
 
       lack = true
-      _this._dragStart(ev)
+      that._dragStart(ev)
       
     },false)
 
@@ -144,8 +144,8 @@ class DragDOM{
       var ely = elTop + my
       var elx = elLeft + mx
 
-      if( _this.elPosition === 'absolute' || _this.elPosition === 'fixed'){
-        if(!_this.config.overflow){
+      if( that.elPosition === 'absolute' || that.elPosition === 'fixed'){
+        if(!that.config.overflow){
           if(ely < 0){ ely = 0 }
           if(elx < 0){ elx = 0 }
           if(ely > parentHeight - elHeight){ ely = parentHeight - elHeight }
@@ -153,14 +153,15 @@ class DragDOM{
         }
       }
 
-      _this.moveData = {mx,my,ely,elx}
+      that.moveData = {mx,my,ely,elx}
 
-      var a = _this._drag(ev,_this.moveData)
+      var a = that._drag(ev,that.moveData)
       if(a !== false){
+        el.style.bottom = 'auto';
+        el.style.right = 'auto';
         el.style.top = ely + 'px';
         el.style.left = elx + 'px';
       }
-      
     }, {passive: false})
 
 
@@ -168,7 +169,7 @@ class DragDOM{
     document.addEventListener(evEnd, function end(ev){
       if(lack){
         lack = false
-        _this._dragEnd(ev)
+        that._dragEnd(ev)
       }
     }, false)
     

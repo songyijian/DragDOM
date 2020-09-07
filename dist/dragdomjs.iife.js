@@ -1,1 +1,228 @@
-var DragDOM=function(){"use strict";function E(t,e){return t.currentStyle?t.currentStyle[e]:window.getComputedStyle(t,!1)[e]}return function(){function t(t){var e=1<arguments.length&&void 0!==arguments[1]?arguments[1]:{};1===t.nodeType?(this.elPosition=E(t,"position"),"absolute"===this.elPosition||"fixed"===this.elPosition?(this.el=t,this._dragStart=function(){},this._drag=function(){},this._dragEnd=function(){},this.parentData=null,this.elData=null,this.moveData=null,this.config={overflow:e.overflow||!1},this.init(this.el)):console.warn("[DragDOM el] position on  absolute | fixed！")):console.warn("[DragDOM el] Is not a valid node ！")}var e=t.prototype;return e.init=function(u){var t,e,n,d=this,f=!1,o=void 0!==u.ontouchstart?"touch":"mouse";function h(t){var e=t||window.event;return"touch"===o?e.touches[0]:e}n="touch"===o?(t="touchstart",e="touchmove","touchend"):(t="mousedown",e="mousemove","mouseup");var c,g,p,v,m,D,w,P,x,y,b=null;u.addEventListener(t,function(t){var e,n,o,i,s,a,r,l;this.elPosition=E(u,"position"),"absolute"===this.elPosition||"fixed"===this.elPosition?(e=h(t),D="absolute"===d.elPosition?(n=function(t){for(var e=t.offsetLeft,n=t.offsetTop,o=t.offsetParent;null!=o;)e+=o.offsetLeft+o.clientLeft,n+=o.offsetTop+o.clientTop,o=o.offsetParent;return{x:e,y:n}}(b=u.offsetParent),i=(o=b.getBoundingClientRect()).height,s=o.width,w=n.y,P=n.x,m=s,i):(b=document.documentElement,P=w=0,m=document.documentElement.clientWidth,document.documentElement.clientHeight),r=(a=u.getBoundingClientRect()).height,l=a.width,p=l,v=r,c=u.offsetTop,g=u.offsetLeft,x=e.pageX,y=e.pageY,d.parentData={parent:b,parentWidth:m,parentHeight:D,parentTop:w,parentLeft:P},d.elData={elWidth:p,elHeight:v,elTop:c,elLeft:g},d.moveData=null,f=!0,d._dragStart(t)):console.error("[Drag el] position on  absolute | fixed！")},!1),document.addEventListener(e,function(t){var e,n,o,i,s;f&&(t.preventDefault(),n=(e=h(t)).pageX-x,o=e.pageY-y,i=c+o,s=g+n,"absolute"!==d.elPosition&&"fixed"!==d.elPosition||d.config.overflow||(i<0&&(i=0),s<0&&(s=0),D-v<i&&(i=D-v),m-p<s&&(s=m-p)),!(d.moveData={mx:n,my:o,ely:i,elx:s})!==d._drag(t,d.moveData)&&(u.style.top=i+"px",u.style.left=s+"px"))},{passive:!1}),document.addEventListener(n,function(t){f&&(f=!1,d._dragEnd(t))},!1)},e.start=function(t){return this._dragStart=t.bind(this),this},e.drag=function(t){return this._drag=t.bind(this),this},e.end=function(t){return this._dragEnd=t.bind(this),this},t}()}();
+var DragDOM = (function () {
+  'use strict';
+
+  function getStyle(obj, attr) {
+    return obj.currentStyle ? obj.currentStyle[attr] : window.getComputedStyle(obj, false)[attr];
+  }
+
+  function getPage(element) {
+    // 获取元素在页面上的绝对位置
+    var actualLeft = element.offsetLeft;
+    var actualTop = element.offsetTop;
+    var parent = element.offsetParent;
+
+    while (parent != null) {
+      actualLeft += parent.offsetLeft + parent.clientLeft;
+      actualTop += parent.offsetTop + parent.clientTop;
+      parent = parent.offsetParent;
+    }
+
+    return {
+      x: actualLeft,
+      y: actualTop
+    };
+  }
+
+  var DragDOM = /*#__PURE__*/function () {
+    function DragDOM(el) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      if (el.nodeType !== 1) {
+        console.warn('[DragDOM el] Is not a valid node ！');
+        return;
+      }
+
+      this.elPosition = getStyle(el, 'position');
+
+      if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
+        // static | fixed | absolute
+        console.warn('[DragDOM el] position on  absolute | fixed！');
+        return;
+      }
+
+      this.el = el;
+
+      this._dragStart = function () {};
+
+      this._drag = function () {};
+
+      this._dragEnd = function () {};
+
+      this.parentData = null;
+      this.elData = null;
+      this.moveData = null;
+      this.config = {
+        overflow: data.overflow || false
+      };
+      this.init(this.el);
+    }
+
+    var _proto = DragDOM.prototype;
+
+    _proto.init = function init(el) {
+      var that = this;
+      var lack = false;
+      var ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
+      var evStart, evMove, evEnd;
+
+      if (ontype === 'touch') {
+        evStart = 'touchstart';
+        evMove = 'touchmove';
+        evEnd = 'touchend';
+      } else {
+        evStart = 'mousedown';
+        evMove = 'mousemove';
+        evEnd = 'mouseup';
+      }
+
+      function resetEv(iev) {
+        var ev = iev || window.event;
+        return ontype === 'touch' ? ev.touches[0] : ev;
+      }
+
+      var parent = null;
+      var elTop, elLeft, elWidth, elHeight, parentWidth, parentHeight, parentTop, parentLeft;
+      var startx, starty;
+      el.addEventListener(evStart, function (ev) {
+        // ev.preventDefault();
+        this.elPosition = getStyle(el, 'position');
+
+        if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
+          console.error('[Drag el] position on  absolute | fixed！');
+          return;
+        }
+
+        var _ev = resetEv(ev);
+
+        if (that.elPosition === 'absolute') {
+          parent = el.offsetParent;
+          var fa = getPage(parent);
+
+          var _parent$getBoundingCl = parent.getBoundingClientRect(),
+              _height = _parent$getBoundingCl.height,
+              _width = _parent$getBoundingCl.width;
+
+          parentTop = fa.y;
+          parentLeft = fa.x;
+          parentWidth = _width;
+          parentHeight = _height;
+        } else {
+          parent = document.documentElement;
+          parentTop = 0;
+          parentLeft = 0;
+          parentWidth = document.documentElement.clientWidth;
+          parentHeight = document.documentElement.clientHeight;
+        }
+
+        {
+          var _el$getBoundingClient = el.getBoundingClientRect(),
+              height = _el$getBoundingClient.height,
+              width = _el$getBoundingClient.width;
+
+          elWidth = width;
+          elHeight = height;
+          elTop = el.offsetTop;
+          elLeft = el.offsetLeft;
+        }
+        startx = _ev.pageX;
+        starty = _ev.pageY;
+        that.parentData = {
+          parent: parent,
+          parentWidth: parentWidth,
+          parentHeight: parentHeight,
+          parentTop: parentTop,
+          parentLeft: parentLeft
+        };
+        that.elData = {
+          elWidth: elWidth,
+          elHeight: elHeight,
+          elTop: elTop,
+          elLeft: elLeft
+        };
+        that.moveData = null;
+        lack = true;
+
+        that._dragStart(ev);
+      }, false);
+      document.addEventListener(evMove, function move(ev) {
+        if (!lack) {
+          return;
+        }
+
+        ev.preventDefault();
+
+        var _ev = resetEv(ev);
+
+        var mx = _ev.pageX - startx;
+        var my = _ev.pageY - starty;
+        var ely = elTop + my;
+        var elx = elLeft + mx;
+
+        if (that.elPosition === 'absolute' || that.elPosition === 'fixed') {
+          if (!that.config.overflow) {
+            if (ely < 0) {
+              ely = 0;
+            }
+
+            if (elx < 0) {
+              elx = 0;
+            }
+
+            if (ely > parentHeight - elHeight) {
+              ely = parentHeight - elHeight;
+            }
+
+            if (elx > parentWidth - elWidth) {
+              elx = parentWidth - elWidth;
+            }
+          }
+        }
+
+        that.moveData = {
+          mx: mx,
+          my: my,
+          ely: ely,
+          elx: elx
+        };
+
+        var a = that._drag(ev, that.moveData);
+
+        if (a !== false) {
+          el.style.bottom = 'auto';
+          el.style.right = 'auto';
+          el.style.top = ely + 'px';
+          el.style.left = elx + 'px';
+        }
+      }, {
+        passive: false
+      });
+      document.addEventListener(evEnd, function end(ev) {
+        if (lack) {
+          lack = false;
+
+          that._dragEnd(ev);
+        }
+      }, false);
+    };
+
+    _proto.start = function start(fn) {
+      this._dragStart = fn.bind(this);
+      return this;
+    };
+
+    _proto.drag = function drag(fn) {
+      this._drag = fn.bind(this);
+      return this;
+    };
+
+    _proto.end = function end(fn) {
+      this._dragEnd = fn.bind(this);
+      return this;
+    };
+
+    return DragDOM;
+  }();
+
+  return DragDOM;
+
+}());
