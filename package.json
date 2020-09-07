@@ -1,6 +1,6 @@
 {
   "name": "dragdomjs",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "兼容手机触控屏的DOM拖拽",
   "main": "./dist/index.js",
   "keywords": [
@@ -23,7 +23,8 @@
   },
   "scripts": {
     "dev": "rollup -w -c ./build/rollup.config.dev.js",
-    "build": "rollup -c ./build/rollup.config.prod.js"
+    "build": "rollup -c ./build/rollup.config.prod.js",
+    "pushnpm":"npm run build && npm publish"
   },
   "repository": {
     "type": "git",

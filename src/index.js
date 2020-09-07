@@ -20,8 +20,7 @@ function getPage(element){
   };
 }
 
-
-
+ 
 class DragDOM{
   constructor(el, data={}){
     if(el.nodeType !== 1){
@@ -35,14 +34,16 @@ class DragDOM{
     }
 
     this.el = el;
-    this._dragStart = function(){};
-    this._drag = function(){};
-    this._dragEnd = function(){};
     this.parentData = null
     this.elData = null
     this.moveData = null
+
     this.config = {
-      overflow: data.overflow || false
+      overflow : data.overflow || false,
+      pUnit : data.pUnit || 'px',
+      start : data.start || function(){} ,
+      drag : data.drag || function(){} ,
+      end : data.end || function(){}
     };
   
     this.init(this.el)
@@ -51,10 +52,10 @@ class DragDOM{
 
   init(el){
     const that = this
-    var lack = false
-    var ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
+    let lack = false
+    let ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
 
-    var evStart, evMove, evEnd;
+    let evStart, evMove, evEnd;
     if(ontype === 'touch'){
       evStart = 'touchstart'
       evMove = 'touchmove'
@@ -66,14 +67,15 @@ class DragDOM{
     }
 
     function resetEv(iev){
-      var ev = iev || window.event
+      let ev = iev || window.event
       return ontype === 'touch' ? ev.touches[0] : ev
     }
     
     let parent = null;
-    var elTop, elLeft, elWidth, elHeight, parentWidth, parentHeight, parentTop, parentLeft;
-    var startx,starty;
-
+    let elTop, elLeft, elWidth, elHeight, parentWidth, parentHeight, parentTop, parentLeft;
+    let startx,starty;
+    let clientWidth,clientHeight;
+ 
 
     el.addEventListener(evStart, function(ev){
       // ev.preventDefault();
@@ -82,7 +84,9 @@ class DragDOM{
         console.error('[Drag el] position on  absolute | fixed！')
         return 
       }
-      var _ev = resetEv(ev)
+      let _ev = resetEv(ev)
+      startx = _ev.pageX
+      starty = _ev.pageY
 
       if(that.elPosition === 'absolute'){
         parent = el.offsetParent
@@ -92,26 +96,15 @@ class DragDOM{
         parentLeft = fa.x;
         parentWidth = width
         parentHeight = height
-
       }else{
+        clientWidth = document.documentElement.clientWidth;
+        clientHeight = document.documentElement.clientHeight;
         parent = document.documentElement
         parentTop = 0
         parentLeft = 0
-        parentWidth = document.documentElement.clientWidth
-        parentHeight = document.documentElement.clientHeight
+        parentWidth = clientWidth
+        parentHeight = clientHeight
       }
-
-      {
-        var {height,width} =  el.getBoundingClientRect()
-        elWidth = width
-        elHeight = height
-        elTop = el.offsetTop
-        elLeft = el.offsetLeft
-      }
-
-      startx = _ev.pageX
-      starty = _ev.pageY
-
       that.parentData = {
         parent,
         parentWidth,
@@ -120,16 +113,21 @@ class DragDOM{
         parentLeft,
       }
 
+      let {height,width} =  el.getBoundingClientRect()
+      elWidth = width
+      elHeight = height
+      elTop = el.offsetTop
+      elLeft = el.offsetLeft
       that.elData = {
         elWidth,
         elHeight,
         elTop,
         elLeft
       }
-      that.moveData = null
 
+      that.moveData = null
       lack = true
-      that._dragStart(ev)
+      that.config.start.call(that,ev)
       
     },false)
 
@@ -138,11 +136,11 @@ class DragDOM{
     document.addEventListener(evMove, function move(ev){
       if(!lack){ return}
       ev.preventDefault();
-      var _ev = resetEv(ev)
-      var mx = _ev.pageX - startx
-      var my = _ev.pageY- starty
-      var ely = elTop + my
-      var elx = elLeft + mx
+      let _ev = resetEv(ev)
+      let mx = _ev.pageX - startx
+      let my = _ev.pageY- starty
+      let ely = elTop + my
+      let elx = elLeft + mx
 
       if( that.elPosition === 'absolute' || that.elPosition === 'fixed'){
         if(!that.config.overflow){
@@ -155,40 +153,44 @@ class DragDOM{
 
       that.moveData = {mx,my,ely,elx}
 
-      var a = that._drag(ev,that.moveData)
-      if(a !== false){
+      if(that.config.drag.call(that,ev,that.moveData) !== false){
         el.style.bottom = 'auto';
         el.style.right = 'auto';
-        el.style.top = ely + 'px';
-        el.style.left = elx + 'px';
+        switch(that.config.pUnit){
+          case '%':
+            el.style.top = ely / parentHeight * 100 + '%';
+            el.style.left = elx / parentWidth * 100  + '%';
+            break
+          default:
+            el.style.top = ely + 'px';
+            el.style.left = elx + 'px';
+        }
       }
     }, {passive: false})
-
 
 
     document.addEventListener(evEnd, function end(ev){
       if(lack){
         lack = false
-        that._dragEnd(ev)
+        that.config.end.call(that,ev)
       }
     }, false)
     
   }
 
-  
 
   start(fn){
-    this._dragStart = fn.bind(this)
+    this.config.start = fn
     return this
   }
 
   drag(fn){
-    this._drag = fn.bind(this)
+    this.config.drag = fn
     return this
   }
 
   end(fn){
-    this._dragEnd = fn.bind(this)
+    this.config.end = fn
     return this
   }
 

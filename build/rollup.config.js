@@ -49,7 +49,7 @@ module.exports = [
     input: resolveFile('./src/index.js'),
     output: [
       {
-        file: resolveFile(`dist/${pname}.iife.js`),
+        file: resolveFile(`dist/${pname}.iife.${pversion}.js`),
         name:moduleName,
         format: 'iife',
       }

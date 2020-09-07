@@ -38,11 +38,25 @@
 
   <script>
     const $ = document.querySelector.bind(document)
-    new DragDOM($('#box1'),{overflow:false})
-    new DragDOM($('#box2'),{overflow:true})
+    new DragDOM($('#box1'),{
+      overflow:false,
+      pUnit:'%'
+    })
 
-    new DragDOM($('#box3'))
-    new DragDOM($('#box4'),{overflow:true})
+
+    new DragDOM($('#box2'),{
+      overflow:true,
+      pUnit:'%',
+      start:function(){
+        console.log(this)
+      },
+      end:function(){
+        console.log(this)
+      }
+    })
+
+    new DragDOM($('#box3'),{pUnit:'%'})
+    new DragDOM($('#box4'),{overflow:true,pUnit:'%'})
 
   </script>
 </body>

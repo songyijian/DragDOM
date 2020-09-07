@@ -22,7 +22,9 @@ function getPage(element) {
     x: actualLeft,
     y: actualTop
   };
-}
+} // pUnit
+// position Unit
+
 
 var DragDOM = /*#__PURE__*/function () {
   function DragDOM(el) {
@@ -42,18 +44,15 @@ var DragDOM = /*#__PURE__*/function () {
     }
 
     this.el = el;
-
-    this._dragStart = function () {};
-
-    this._drag = function () {};
-
-    this._dragEnd = function () {};
-
     this.parentData = null;
     this.elData = null;
     this.moveData = null;
     this.config = {
-      overflow: data.overflow || false
+      overflow: data.overflow || false,
+      pUnit: data.pUnit || 'px',
+      start: data.start || function () {},
+      drag: data.drag || function () {},
+      end: data.end || function () {}
     };
     this.init(this.el);
   }
@@ -84,6 +83,7 @@ var DragDOM = /*#__PURE__*/function () {
     var parent = null;
     var elTop, elLeft, elWidth, elHeight, parentWidth, parentHeight, parentTop, parentLeft;
     var startx, starty;
+    var clientWidth, clientHeight;
     el.addEventListener(evStart, function (ev) {
       // ev.preventDefault();
       this.elPosition = getStyle(el, 'position');
@@ -94,6 +94,9 @@ var DragDOM = /*#__PURE__*/function () {
       }
 
       var _ev = resetEv(ev);
+
+      startx = _ev.pageX;
+      starty = _ev.pageY;
 
       if (that.elPosition === 'absolute') {
         parent = el.offsetParent;
@@ -108,25 +111,15 @@ var DragDOM = /*#__PURE__*/function () {
         parentWidth = _width;
         parentHeight = _height;
       } else {
+        clientWidth = document.documentElement.clientWidth;
+        clientHeight = document.documentElement.clientHeight;
         parent = document.documentElement;
         parentTop = 0;
         parentLeft = 0;
-        parentWidth = document.documentElement.clientWidth;
-        parentHeight = document.documentElement.clientHeight;
+        parentWidth = clientWidth;
+        parentHeight = clientHeight;
       }
 
-      {
-        var _el$getBoundingClient = el.getBoundingClientRect(),
-            height = _el$getBoundingClient.height,
-            width = _el$getBoundingClient.width;
-
-        elWidth = width;
-        elHeight = height;
-        elTop = el.offsetTop;
-        elLeft = el.offsetLeft;
-      }
-      startx = _ev.pageX;
-      starty = _ev.pageY;
       that.parentData = {
         parent: parent,
         parentWidth: parentWidth,
@@ -134,6 +127,15 @@ var DragDOM = /*#__PURE__*/function () {
         parentTop: parentTop,
         parentLeft: parentLeft
       };
+
+      var _el$getBoundingClient = el.getBoundingClientRect(),
+          height = _el$getBoundingClient.height,
+          width = _el$getBoundingClient.width;
+
+      elWidth = width;
+      elHeight = height;
+      elTop = el.offsetTop;
+      elLeft = el.offsetLeft;
       that.elData = {
         elWidth: elWidth,
         elHeight: elHeight,
@@ -142,8 +144,7 @@ var DragDOM = /*#__PURE__*/function () {
       };
       that.moveData = null;
       lack = true;
-
-      that._dragStart(ev);
+      that.config.start.call(that, ev);
     }, false);
     document.addEventListener(evMove, function move(ev) {
       if (!lack) {
@@ -186,13 +187,20 @@ var DragDOM = /*#__PURE__*/function () {
         elx: elx
       };
 
-      var a = that._drag(ev, that.moveData);
-
-      if (a !== false) {
+      if (that.config.drag.call(that, ev, that.moveData) !== false) {
         el.style.bottom = 'auto';
         el.style.right = 'auto';
-        el.style.top = ely + 'px';
-        el.style.left = elx + 'px';
+
+        switch (that.config.pUnit) {
+          case '%':
+            el.style.top = ely / parentHeight * 100 + '%';
+            el.style.left = elx / parentWidth * 100 + '%';
+            break;
+
+          default:
+            el.style.top = ely + 'px';
+            el.style.left = elx + 'px';
+        }
       }
     }, {
       passive: false
@@ -200,24 +208,23 @@ var DragDOM = /*#__PURE__*/function () {
     document.addEventListener(evEnd, function end(ev) {
       if (lack) {
         lack = false;
-
-        that._dragEnd(ev);
+        that.config.end.call(that, ev);
       }
     }, false);
   };
 
   _proto.start = function start(fn) {
-    this._dragStart = fn.bind(this);
+    this.config.start = fn;
     return this;
   };
 
   _proto.drag = function drag(fn) {
-    this._drag = fn.bind(this);
+    this.config.drag = fn;
     return this;
   };
 
   _proto.end = function end(fn) {
-    this._dragEnd = fn.bind(this);
+    this.config.end = fn;
     return this;
   };
 
