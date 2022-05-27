@@ -1,63 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
 
-  <title>Documen</title>
-  <script src="../dist/dragdomjs.umd.js"></script>
+    <title>Documen</title>
+    <script src="../dist/dragdomjs.umd.js"></script>
 
-  <style>
-    html,body{padding: 0; margin:0; }
-    body{text-align: center; padding: 0; margin:0;}
-    *{ box-sizing: border-box;}
-    .boxf{ border:1px solid #000; height:100vw; width:90vw; position: relative; margin:5vw; display: inline-block;}
-    .boxc{ width: 18vmin; height: 18vmin; background: red; position: absolute;}
-    #box2{height:auto;  position: absolute; z-index: 999; bottom: 0px; left: 0; border: 1px solid yellow;}
-
-    #box3{ position:fixed; top:0;}
-    #box4{ position:fixed; top:18vmin; right: 0;}
-    .fixed{ background: yellow;}
-  </style>
-</head>
-<body>
-
-  <div class="boxf">
-    <h3> 限制拖出父级盒子 </h3>
-    <div id="box1" class="boxc">absolute</div>
-  </div>
-
-  <div class="boxf">
-    <h3> 可拖出父级盒子 </h3>
-    <div id="box2" class="boxc">absolute</div>
-  </div>
-
-  <div id="box3" class="boxc fixed">fixed 不可拖出</div>
-  <div id="box4" class="boxc fixed">fixed 可拖出</div>
-
-
-  <script>
-    const $ = document.querySelector.bind(document)
-    new DragDOM($('#box1'),{
-      overflow:false,
-      pUnit:'%'
-    })
-
-
-    new DragDOM($('#box2'),{
-      overflow:true,
-      pUnit:'%',
-      start:function(){
-        console.log(this)
-      },
-      end:function(){
-        console.log(this)
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
       }
-    })
+      body {
+        text-align: center;
+        padding: 0;
+        margin: 0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      .boxf {
+        border: 1px solid #000;
+        height: 100vw;
+        width: 90vw;
+        position: relative;
+        margin: 5vw;
+        display: inline-block;
+      }
+      .boxc {
+        width: 18vmin;
+        height: 18vmin;
+        background: red;
+        position: absolute;
+      }
+      #box2 {
+        height: auto;
+        position: absolute;
+        z-index: 999;
+        bottom: 50%;
+        right: 0;
+        border: 1px solid yellow;
+      }
 
-    new DragDOM($('#box3'),{pUnit:'%'})
-    new DragDOM($('#box4'),{overflow:true,pUnit:'%'})
+      #box3 {
+        position: fixed;
+        top: 0;
+      }
+      #box4 {
+        position: fixed;
+        top: 18vmin;
+        right: 0;
+      }
+      .fixed {
+        background: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boxf">
+      <h3>父级盒子</h3>
+      <div id="box1" class="boxc">
+        absolute (可拖出 / Allow to go out Limit out )
+      </div>
+      <div id="box2" class="boxc">absolute (限制拖出 / Lmit out )</div>
+    </div>
 
-  </script>
-</body>
+    <div id="box3" class="boxc fixed">fixed (限制拖出 / Lmit out )</div>
+    <div id="box4" class="boxc fixed">fixed (可拖出 / Allow to go out )</div>
+
+    <script>
+      const $ = document.querySelector.bind(document);
+      new DragDOM($("#box1"), {
+        overflow: false,
+        pUnit: "%",
+      });
+
+      new DragDOM($("#box2"), {
+        overflow: true,
+        pUnit: "%",
+        start: function () {
+          console.log(this);
+        },
+        end: function () {
+          console.log(this);
+        },
+      });
+
+      new DragDOM($("#box3"), { pUnit: "%" });
+      new DragDOM($("#box4"), { overflow: true, pUnit: "%" });
+    </script>
+  </body>
 </html>

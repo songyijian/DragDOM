@@ -1,1 +1,236 @@
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t=t||self).DragDOM=e()}(this,function(){"use strict";function E(t,e){return t.currentStyle?t.currentStyle[e]:window.getComputedStyle(t,!1)[e]}return function(){function t(t){var e=1<arguments.length&&void 0!==arguments[1]?arguments[1]:{};1===t.nodeType?(this.elPosition=E(t,"position"),"absolute"===this.elPosition||"fixed"===this.elPosition?(this.el=t,this.parentData=null,this.elData=null,this.moveData=null,this.config={overflow:e.overflow||!1,pUnit:e.pUnit||"px",start:e.start||function(){},drag:e.drag||function(){},end:e.end||function(){}},this.init(this.el)):console.warn("[DragDOM el] position on  absolute | fixed！")):console.warn("[DragDOM el] Is not a valid node ！")}var e=t.prototype;return e.init=function(f){var t,e,n,u=this,c=!1,o=void 0!==f.ontouchstart?"touch":"mouse";function d(t){var e=t||window.event;return"touch"===o?e.touches[0]:e}n="touch"===o?(t="touchstart",e="touchmove","touchend"):(t="mousedown",e="mousemove","mouseup");var h,p,g,m,v,y,D,x,w,P,L,b,T=null;f.addEventListener(t,function(t){var e,n,o,i,s,l,a,r;this.elPosition=E(f,"position"),"absolute"===this.elPosition||"fixed"===this.elPosition?(e=d(t),w=e.pageX,P=e.pageY,y="absolute"===u.elPosition?(n=function(t){for(var e=t.offsetLeft,n=t.offsetTop,o=t.offsetParent;null!=o;)e+=o.offsetLeft+o.clientLeft,n+=o.offsetTop+o.clientTop,o=o.offsetParent;return{x:e,y:n}}(T=f.offsetParent),i=(o=T.getBoundingClientRect()).height,s=o.width,D=n.y,x=n.x,v=s,i):(L=document.documentElement.clientWidth,b=document.documentElement.clientHeight,T=document.documentElement,x=D=0,v=L,b),u.parentData={parent:T,parentWidth:v,parentHeight:y,parentTop:D,parentLeft:x},a=(l=f.getBoundingClientRect()).height,r=l.width,g=r,m=a,h=f.offsetTop,p=f.offsetLeft,u.elData={elWidth:g,elHeight:m,elTop:h,elLeft:p},u.moveData=null,c=!0,u.config.start.call(u,t)):console.error("[Drag el] position on  absolute | fixed！")},!1),document.addEventListener(e,function(t){var e,n,o,i,s;c&&(t.preventDefault(),n=(e=d(t)).pageX-w,o=e.pageY-P,i=h+o,s=p+n,"absolute"!==u.elPosition&&"fixed"!==u.elPosition||u.config.overflow||(i<0&&(i=0),s<0&&(s=0),y-m<i&&(i=y-m),v-g<s&&(s=v-g)),!(u.moveData={mx:n,my:o,ely:i,elx:s})!==u.config.drag.call(u,t,u.moveData)&&(f.style.bottom="auto",f.style.right="auto","%"===u.config.pUnit?(f.style.top=i/y*100+"%",f.style.left=s/v*100+"%"):(f.style.top=i+"px",f.style.left=s+"px")))},{passive:!1}),document.addEventListener(n,function(t){c&&(c=!1,u.config.end.call(u,t))},!1)},e.start=function(t){return this.config.start=t,this},e.drag=function(t){return this.config.drag=t,this},e.end=function(t){return this.config.end=t,this},t}()});
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.DragDOM = factory());
+}(this, (function () { 'use strict';
+
+  function getStyle(obj, attr) {
+    return obj.currentStyle ? obj.currentStyle[attr] : window.getComputedStyle(obj, false)[attr];
+  }
+
+  function getPage(element) {
+    // 获取元素在页面上的绝对位置
+    var actualLeft = element.offsetLeft;
+    var actualTop = element.offsetTop;
+    var parent = element.offsetParent;
+
+    while (parent != null) {
+      actualLeft += parent.offsetLeft + parent.clientLeft;
+      actualTop += parent.offsetTop + parent.clientTop;
+      parent = parent.offsetParent;
+    }
+
+    return {
+      x: actualLeft,
+      y: actualTop
+    };
+  }
+
+  var DragDOM = /*#__PURE__*/function () {
+    function DragDOM(el) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      if (el.nodeType !== 1) {
+        console.warn('[DragDOM el] Is not a valid node ！');
+        return;
+      }
+
+      this.elPosition = getStyle(el, 'position');
+
+      if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
+        // static | fixed | absolute
+        console.warn('[DragDOM el] position on  absolute | fixed！');
+        return;
+      }
+
+      this.el = el;
+      this.parentData = null;
+      this.elData = null;
+      this.moveData = null;
+      this.config = {
+        overflow: data.overflow || false,
+        pUnit: data.pUnit || 'px',
+        start: data.start || function () {},
+        drag: data.drag || function () {},
+        end: data.end || function () {}
+      };
+      this.init(this.el);
+    }
+
+    var _proto = DragDOM.prototype;
+
+    _proto.init = function init(el) {
+      var that = this;
+      var lack = false;
+      var ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
+      var evStart, evMove, evEnd;
+
+      if (ontype === 'touch') {
+        evStart = 'touchstart';
+        evMove = 'touchmove';
+        evEnd = 'touchend';
+      } else {
+        evStart = 'mousedown';
+        evMove = 'mousemove';
+        evEnd = 'mouseup';
+      }
+
+      function resetEv(iev) {
+        var ev = iev || window.event;
+        return ontype === 'touch' ? ev.touches[0] : ev;
+      }
+
+      var parent = null;
+      var elTop, elLeft, elWidth, elHeight, parentWidth, parentHeight, parentTop, parentLeft;
+      var startx, starty;
+      var clientWidth, clientHeight;
+      el.addEventListener(evStart, function (ev) {
+        // ev.preventDefault();
+        this.elPosition = getStyle(el, 'position');
+
+        if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
+          console.error('[Drag el] position on  absolute | fixed！');
+          return;
+        }
+
+        var _ev = resetEv(ev);
+
+        startx = _ev.pageX;
+        starty = _ev.pageY;
+
+        if (that.elPosition === 'absolute') {
+          parent = el.offsetParent;
+          var fa = getPage(parent);
+
+          var _parent$getBoundingCl = parent.getBoundingClientRect(),
+              _height = _parent$getBoundingCl.height,
+              _width = _parent$getBoundingCl.width;
+
+          parentTop = fa.y;
+          parentLeft = fa.x;
+          parentWidth = _width;
+          parentHeight = _height;
+        } else {
+          clientWidth = document.documentElement.clientWidth;
+          clientHeight = document.documentElement.clientHeight;
+          parent = document.documentElement;
+          parentTop = 0;
+          parentLeft = 0;
+          parentWidth = clientWidth;
+          parentHeight = clientHeight;
+        }
+
+        that.parentData = {
+          parent: parent,
+          parentWidth: parentWidth,
+          parentHeight: parentHeight,
+          parentTop: parentTop,
+          parentLeft: parentLeft
+        };
+
+        var _el$getBoundingClient = el.getBoundingClientRect(),
+            height = _el$getBoundingClient.height,
+            width = _el$getBoundingClient.width;
+
+        elWidth = width;
+        elHeight = height;
+        elTop = el.offsetTop;
+        elLeft = el.offsetLeft;
+        that.elData = {
+          elWidth: elWidth,
+          elHeight: elHeight,
+          elTop: elTop,
+          elLeft: elLeft
+        };
+        that.moveData = null;
+        lack = true;
+        that.config.start.call(that, ev);
+      }, false);
+      document.addEventListener(evMove, function move(ev) {
+        if (!lack) {
+          return;
+        }
+
+        ev.preventDefault();
+
+        var _ev = resetEv(ev);
+
+        var mx = _ev.pageX - startx;
+        var my = _ev.pageY - starty;
+        var ely = elTop + my;
+        var elx = elLeft + mx;
+
+        if (that.elPosition === 'absolute' || that.elPosition === 'fixed') {
+          if (!that.config.overflow) {
+            if (ely < 0) {
+              ely = 0;
+            }
+
+            if (elx < 0) {
+              elx = 0;
+            }
+
+            if (ely > parentHeight - elHeight) {
+              ely = parentHeight - elHeight;
+            }
+
+            if (elx > parentWidth - elWidth) {
+              elx = parentWidth - elWidth;
+            }
+          }
+        }
+
+        that.moveData = {
+          mx: mx,
+          my: my,
+          ely: ely,
+          elx: elx
+        };
+
+        if (that.config.drag.call(that, ev, that.moveData) !== false) {
+          el.style.bottom = 'auto';
+          el.style.right = 'auto';
+
+          switch (that.config.pUnit) {
+            case '%':
+              el.style.top = ely / parentHeight * 100 + '%';
+              el.style.left = elx / parentWidth * 100 + '%';
+              break;
+
+            default:
+              el.style.top = ely + 'px';
+              el.style.left = elx + 'px';
+          }
+        }
+      }, {
+        passive: false
+      });
+      document.addEventListener(evEnd, function end(ev) {
+        if (lack) {
+          lack = false;
+          that.config.end.call(that, ev);
+        }
+      }, false);
+    };
+
+    _proto.start = function start(fn) {
+      this.config.start = fn;
+      return this;
+    };
+
+    _proto.drag = function drag(fn) {
+      this.config.drag = fn;
+      return this;
+    };
+
+    _proto.end = function end(fn) {
+      this.config.end = fn;
+      return this;
+    };
+
+    return DragDOM;
+  }();
+
+  return DragDOM;
+
+})));
