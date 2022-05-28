@@ -17,7 +17,8 @@
         margin: 0;
       }
       body {
-        text-align: center;
+        /* text-align: center; */
+        font-size: 12px;
         padding: 0;
         margin: 0;
       }
@@ -32,9 +33,9 @@
         margin: 5vw;
         display: inline-block;
       }
-      .boxc {
-        width: 18vmin;
-        height: 18vmin;
+      .box {
+        width: 15em;
+        /* height: ; */
         background: red;
         position: absolute;
       }
@@ -64,20 +65,17 @@
   <body>
     <div class="boxf">
       <h3>父级盒子</h3>
-      <div id="box1" class="boxc">
-        absolute (可拖出 / Allow to go out Limit out )
-      </div>
-      <div id="box2" class="boxc">absolute (限制拖出 / Lmit out )</div>
+      <div id="box1" class="box">absolute <br />可拖出/Allow to go out</div>
+      <div id="box2" class="box">absolute <br />Lmit out/限制拖出</div>
     </div>
 
-    <div id="box3" class="boxc fixed">fixed (限制拖出 / Lmit out )</div>
-    <div id="box4" class="boxc fixed">fixed (可拖出 / Allow to go out )</div>
+    <div id="box3" class="box fixed">fixed <br />Lmit out/限制拖出</div>
+    <div id="box4" class="box fixed">fixed <br />可拖出/Allow to go out</div>
 
     <script>
       const $ = document.querySelector.bind(document);
       new DragDOM($("#box1"), {
         overflow: false,
-        pUnit: "%",
       });
 
       new DragDOM($("#box2"), {
@@ -91,7 +89,7 @@
         },
       });
 
-      new DragDOM($("#box3"), { pUnit: "%" });
+      new DragDOM($("#box3"));
       new DragDOM($("#box4"), { overflow: true, pUnit: "%" });
     </script>
   </body>
