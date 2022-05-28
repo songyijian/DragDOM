@@ -35,12 +35,12 @@
       }
       .box {
         width: 15em;
-        /* height: ; */
+        /* height: 10em; */
         background: red;
         position: absolute;
       }
       #box2 {
-        height: auto;
+        /* height: auto; */
         position: absolute;
         z-index: 999;
         bottom: 50%;
@@ -66,7 +66,7 @@
     <div class="boxf">
       <h3>父级盒子</h3>
       <div id="box1" class="box">absolute <br />可拖出/Allow to go out</div>
-      <div id="box2" class="box">absolute <br />Lmit out/限制拖出</div>
+      <div id="box2" class="box">absolute <br />限制拖出/Lmit out</div>
     </div>
 
     <div id="box3" class="box fixed">fixed <br />Lmit out/限制拖出</div>
@@ -75,11 +75,11 @@
     <script>
       const $ = document.querySelector.bind(document);
       new DragDOM($("#box1"), {
-        overflow: false,
+        overflow: true,
       });
 
       new DragDOM($("#box2"), {
-        overflow: true,
+        overflow: false,
         pUnit: "%",
         start: function () {
           console.log(this);

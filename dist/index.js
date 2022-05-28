@@ -29,15 +29,15 @@ var DragDOM = /*#__PURE__*/function () {
     var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     if (el.nodeType !== 1) {
-      console.warn('[DragDOM el] Is not a valid node ！');
+      console.warn("[DragDOM el] Is not a valid node ！");
       return;
     }
 
-    this.elPosition = getStyle(el, 'position');
+    this.elPosition = getStyle(el, "position");
 
-    if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
+    if (!(this.elPosition === "absolute" || this.elPosition === "fixed")) {
       // static | fixed | absolute
-      console.warn('[DragDOM el] position on  absolute | fixed！');
+      console.warn("[DragDOM el] position on  absolute | fixed！");
       return;
     }
 
@@ -47,7 +47,7 @@ var DragDOM = /*#__PURE__*/function () {
     this.moveData = null;
     this.config = {
       overflow: data.overflow || false,
-      pUnit: data.pUnit || 'px',
+      pUnit: data.pUnit || "px",
       start: data.start || function () {},
       drag: data.drag || function () {},
       end: data.end || function () {}
@@ -60,22 +60,22 @@ var DragDOM = /*#__PURE__*/function () {
   _proto.init = function init(el) {
     var that = this;
     var lack = false;
-    var ontype = el.ontouchstart !== undefined ? 'touch' : 'mouse';
+    var ontype = el.ontouchstart !== undefined ? "touch" : "mouse";
     var evStart, evMove, evEnd;
 
-    if (ontype === 'touch') {
-      evStart = 'touchstart';
-      evMove = 'touchmove';
-      evEnd = 'touchend';
+    if (ontype === "touch") {
+      evStart = "touchstart";
+      evMove = "touchmove";
+      evEnd = "touchend";
     } else {
-      evStart = 'mousedown';
-      evMove = 'mousemove';
-      evEnd = 'mouseup';
+      evStart = "mousedown";
+      evMove = "mousemove";
+      evEnd = "mouseup";
     }
 
     function resetEv(iev) {
       var ev = iev || window.event;
-      return ontype === 'touch' ? ev.touches[0] : ev;
+      return ontype === "touch" ? ev.touches[0] : ev;
     }
 
     var parent = null;
@@ -83,12 +83,11 @@ var DragDOM = /*#__PURE__*/function () {
     var startx, starty;
     var clientWidth, clientHeight;
     el.addEventListener(evStart, function (ev) {
-      // ev.preventDefault();
-      this.elPosition = getStyle(el, 'position');
+      ev.preventDefault();
+      this.elPosition = getStyle(el, "position");
 
-      if (!(this.elPosition === 'absolute' || this.elPosition === 'fixed')) {
-        console.error('[Drag el] position on  absolute | fixed！');
-        return;
+      if (!(this.elPosition === "absolute" || this.elPosition === "fixed")) {
+        return console.error("[Drag el] position on  absolute | fixed！");
       }
 
       var _ev = resetEv(ev);
@@ -96,7 +95,7 @@ var DragDOM = /*#__PURE__*/function () {
       startx = _ev.pageX;
       starty = _ev.pageY;
 
-      if (that.elPosition === 'absolute') {
+      if (that.elPosition === "absolute") {
         parent = el.offsetParent;
         var fa = getPage(parent);
 
@@ -145,10 +144,7 @@ var DragDOM = /*#__PURE__*/function () {
       that.config.start.call(that, ev);
     }, false);
     document.addEventListener(evMove, function move(ev) {
-      if (!lack) {
-        return;
-      }
-
+      if (!lack) return;
       ev.preventDefault();
 
       var _ev = resetEv(ev);
@@ -158,24 +154,12 @@ var DragDOM = /*#__PURE__*/function () {
       var ely = elTop + my;
       var elx = elLeft + mx;
 
-      if (that.elPosition === 'absolute' || that.elPosition === 'fixed') {
-        if (!that.config.overflow) {
-          if (ely < 0) {
-            ely = 0;
-          }
-
-          if (elx < 0) {
-            elx = 0;
-          }
-
-          if (ely > parentHeight - elHeight) {
-            ely = parentHeight - elHeight;
-          }
-
-          if (elx > parentWidth - elWidth) {
-            elx = parentWidth - elWidth;
-          }
-        }
+      if ( // (that.elPosition === "absolute" || that.elPosition === "fixed") &&
+      !that.config.overflow) {
+        if (ely > parentHeight - elHeight) ely = parentHeight - elHeight;
+        if (elx > parentWidth - elWidth) elx = parentWidth - elWidth;
+        if (ely < 0) ely = 0;
+        if (elx < 0) elx = 0;
       }
 
       that.moveData = {
@@ -186,18 +170,18 @@ var DragDOM = /*#__PURE__*/function () {
       };
 
       if (that.config.drag.call(that, ev, that.moveData) !== false) {
-        el.style.bottom = 'auto';
-        el.style.right = 'auto';
+        el.style.bottom = "auto";
+        el.style.right = "auto";
 
         switch (that.config.pUnit) {
-          case '%':
-            el.style.top = ely / parentHeight * 100 + '%';
-            el.style.left = elx / parentWidth * 100 + '%';
+          case "%":
+            el.style.top = ely / parentHeight * 100 + "%";
+            el.style.left = elx / parentWidth * 100 + "%";
             break;
 
           default:
-            el.style.top = ely + 'px';
-            el.style.left = elx + 'px';
+            el.style.top = ely + "px";
+            el.style.left = elx + "px";
         }
       }
     }, {
