@@ -8,6 +8,5 @@
 node_modules/
 build/
 demo/
-src/
 dist/*
 !/dist/index.js
